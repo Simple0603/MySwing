@@ -2,6 +2,7 @@ package my;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.File;
 import java.util.ServiceConfigurationError;
 
 import javax.swing.BorderFactory;
@@ -15,6 +16,8 @@ import javax.swing.JTextField;
 import af.swing.LayoutBox;
 import af.swing.layout.HLayout;
 import af.swing.layout.VLayout;
+import my.util.TextFileUtil;
+import org.json.JSONObject;
 
 public class MyFrame extends JFrame
 {
@@ -34,8 +37,11 @@ public class MyFrame extends JFrame
 		
 		root.add(initTop(), BorderLayout.NORTH);
 		root.add(initCenter(), BorderLayout.CENTER);
+		saveButton.addActionListener((e) -> {
+			save();
+		});
 	}
-	private JComponent initTop() {
+	private JComponent initTop(){
 		LayoutBox panel = new LayoutBox().layout(new HLayout());
 		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(0xA0A0A0)));
 		panel.preferredHeight(50).padding(10, 5, 10, 5);
@@ -43,6 +49,22 @@ public class MyFrame extends JFrame
 		panel.add(saveButton);
 		return panel;
 	}
+
+	private void save(){
+		JSONObject json = new JSONObject();
+		json.put("id", idField.getText());
+		json.put("name", nameField.getText());
+		json.put("sex", sexField.getSelectedIndex());
+		json.put("tel", telField.getText());
+		String str = json.toString();
+		File file = new File("StuInfo");
+		try {
+			TextFileUtil.write(file, str, "UTF-8");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
 	private JComponent initCenter() {
 		LayoutBox panel = new LayoutBox().layout(new VLayout());
 		panel.padding(10, 10, 10, 150);
