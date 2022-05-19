@@ -1,20 +1,15 @@
 package my;
 
-
-
 import java.awt.BorderLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-
 public class MyFrame extends JFrame
 {
-
 	public MyFrame(String title)
 	{
 		super(title);
@@ -24,10 +19,10 @@ public class MyFrame extends JFrame
 		this.setContentPane(root);
 
 		// 1 创建列表框
-		JList<String> listbox = new JList<>();
+		JList<String> listBox = new JList<>();
 
 		// 2 滚动条支持
-		JScrollPane scrollPane = new JScrollPane(listbox);
+		JScrollPane scrollPane = new JScrollPane(listBox);
 
 		// 3 添加到主界面
 		root.add(scrollPane, BorderLayout.CENTER);
@@ -50,8 +45,6 @@ public class MyFrame extends JFrame
 		model.addElement("母神");
 		model.addElement("救世主");
 		model.addElement("希雅");
-		listbox.setModel(model); // 显示数据
+		listBox.setModel(model); // 显示数据
 	}
-
-
 }
