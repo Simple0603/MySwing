@@ -1,88 +1,57 @@
 package my;
 
+
+
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.io.File;
-import java.util.ServiceConfigurationError;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
-import af.swing.LayoutBox;
-import af.swing.layout.HLayout;
-import af.swing.layout.VLayout;
-import my.util.TextFileUtil;
-import org.json.JSONObject;
 
 public class MyFrame extends JFrame
 {
-	JButton openButton = new JButton("open");
-	JButton saveButton = new JButton("save");
-	
-	JTextField idField = new JTextField();
-	JTextField nameField = new JTextField();
-	JComboBox<String> sexField = new JComboBox<>();
-	JTextField telField = new JTextField();
-	
-	public MyFrame(String title) {
+
+	public MyFrame(String title)
+	{
 		super(title);
-		
-		LayoutBox root = new LayoutBox().layout(new BorderLayout());
+
+		JPanel root = new JPanel();
+		root.setLayout(new BorderLayout());
 		this.setContentPane(root);
-		
-		root.add(initTop(), BorderLayout.NORTH);
-		root.add(initCenter(), BorderLayout.CENTER);
-		saveButton.addActionListener((e) -> {
-			save();
-		});
-	}
-	private JComponent initTop(){
-		LayoutBox panel = new LayoutBox().layout(new HLayout());
-		panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(0xA0A0A0)));
-		panel.preferredHeight(50).padding(10, 5, 10, 5);
-		panel.add(openButton);
-		panel.add(saveButton);
-		return panel;
+
+		// 1 创建列表框
+		JList<String> listbox = new JList<>();
+
+		// 2 滚动条支持
+		JScrollPane scrollPane = new JScrollPane(listbox);
+
+		// 3 添加到主界面
+		root.add(scrollPane, BorderLayout.CENTER);
+
+		// 4 设置列表数据
+		DefaultListModel<String> model = new DefaultListModel<>();
+		model.addElement("罗亚");
+		model.addElement("爱丽莎");
+		model.addElement("诺艾尔");
+		model.addElement("夏洛特");
+		model.addElement("莉莉安");
+		model.addElement("威廉敏娜");
+		model.addElement("保罗");
+		model.addElement("卡帝亚");
+		model.addElement("约翰");
+		model.addElement("雷顿");
+		model.addElement("安东尼奥");
+		model.addElement("艾丝翠德");
+		model.addElement("卡洛琳");
+		model.addElement("母神");
+		model.addElement("救世主");
+		model.addElement("希雅");
+		listbox.setModel(model); // 显示数据
 	}
 
-	private void save(){
-		JSONObject json = new JSONObject();
-		json.put("id", idField.getText());
-		json.put("name", nameField.getText());
-		json.put("sex", sexField.getSelectedIndex());
-		json.put("tel", telField.getText());
-		String str = json.toString();
-		File file = new File("StuInfo");
-		try {
-			TextFileUtil.write(file, str, "UTF-8");
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
 
-	private JComponent initCenter() {
-		LayoutBox panel = new LayoutBox().layout(new VLayout());
-		panel.padding(10, 10, 10, 150);
-		panel.bgColor(new Color(0xFCFCFC));
-		panel.add(initFormLine("ID", idField));
-		panel.add(initFormLine("Name", nameField));
-		panel.add(initFormLine("Sex", sexField));
-		panel.add(initFormLine("Tel", telField));
-		sexField.addItem("female");
-		sexField.addItem("male");
-		sexField.setSelectedIndex(1);
-		return panel;
-	}
-	private JComponent initFormLine(String label, JComponent field) {
-		LayoutBox formLine = new LayoutBox().layout(new HLayout());
-		formLine.preferredHeight(40).padding(5);
-		formLine.add(new JLabel(label), "50px");
-		formLine.add(field, "1w");
-		return formLine;
-	}
 }
