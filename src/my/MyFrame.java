@@ -3,15 +3,8 @@ package my;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.File;
-import java.util.ServiceConfigurationError;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import af.swing.LayoutBox;
 import af.swing.layout.HLayout;
@@ -28,6 +21,8 @@ public class MyFrame extends JFrame
 	JTextField nameField = new JTextField();
 	JComboBox<String> sexField = new JComboBox<>();
 	JTextField telField = new JTextField();
+
+	File lastDir = new File(".");
 	
 	public MyFrame(String title) {
 		super(title);
@@ -37,9 +32,8 @@ public class MyFrame extends JFrame
 		
 		root.add(initTop(), BorderLayout.NORTH);
 		root.add(initCenter(), BorderLayout.CENTER);
-		saveButton.addActionListener((e) -> {
-			save();
-		});
+		openButton.addActionListener((e) -> load());
+		saveButton.addActionListener((e) -> save());
 	}
 	private JComponent initTop(){
 		LayoutBox panel = new LayoutBox().layout(new HLayout());
@@ -48,21 +42,6 @@ public class MyFrame extends JFrame
 		panel.add(openButton);
 		panel.add(saveButton);
 		return panel;
-	}
-
-	private void save(){
-		JSONObject json = new JSONObject();
-		json.put("id", idField.getText());
-		json.put("name", nameField.getText());
-		json.put("sex", sexField.getSelectedIndex());
-		json.put("tel", telField.getText());
-		String str = json.toString();
-		File file = new File("StuInfo");
-		try {
-			TextFileUtil.write(file, str, "UTF-8");
-		}catch(Exception e){
-			e.printStackTrace();
-		}
 	}
 
 	private JComponent initCenter() {
@@ -78,11 +57,58 @@ public class MyFrame extends JFrame
 		sexField.setSelectedIndex(1);
 		return panel;
 	}
+
 	private JComponent initFormLine(String label, JComponent field) {
 		LayoutBox formLine = new LayoutBox().layout(new HLayout());
 		formLine.preferredHeight(40).padding(5);
 		formLine.add(new JLabel(label), "50px");
 		formLine.add(field, "1w");
 		return formLine;
+	}
+
+	private void load(){
+		JFileChooser chooser = new JFileChooser();
+		chooser.setCurrentDirectory(lastDir);
+		int ret = chooser.showOpenDialog(this);
+		if(ret == JFileChooser.APPROVE_OPTION){
+			File file = chooser.getSelectedFile();
+			lastDir = file.getParentFile();
+			try{
+				String str = TextFileUtil.read(file, "UTF-8");
+				JSONObject json = new JSONObject(str);
+				idField.setText(json.getString("id"));
+				nameField.setText(json.getString("name"));
+				sexField.setSelectedIndex(json.getInt("sex"));
+				telField.setText(json.getString("tel"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void save(){
+		JSONObject json = new JSONObject();
+		if(idField.getText().trim().length() == 0){
+			InfoDialog.showMessage(this, "id can't be null");
+			return;
+		}
+		json.put("id", idField.getText());
+		json.put("name", nameField.getText());
+		json.put("sex", sexField.getSelectedIndex());
+		json.put("tel", telField.getText());
+		String str = json.toString();
+
+		JFileChooser chooser = new JFileChooser();
+		chooser.setCurrentDirectory(lastDir);
+		int ret = chooser.showSaveDialog(this);
+		if(ret == JFileChooser.APPROVE_OPTION){
+			File file = chooser.getSelectedFile();
+			lastDir = file.getParentFile();
+			try {
+				TextFileUtil.write(file, str, "UTF-8");
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 	}
 }
